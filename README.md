@@ -1,0 +1,1 @@
+To calculate the Rabi-Hubbard lattice with dense matrix algorithm.

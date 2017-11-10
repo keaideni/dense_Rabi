@@ -19,6 +19,7 @@ private:
         MatrixXd _SysAdag1;
 
         void MatrixSave(const MatrixXd& A, ofstream outfile);
+        void MatrixRead(const MatrixXd& A, ifstream infile);
         void Kron(MatrixXd& ab,const MatrixXd& a, const MatrixXd& b);
 public:
         const MatrixXd& System()const{return _System;};
