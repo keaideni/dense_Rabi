@@ -1,10 +1,28 @@
-#include "Sub.h"
+#include "QWave.h"
 
-void testSub();
+void testSub(const Parameter& para);
 
-void testSub()
+void testSub(const Parameter& para)
 {
-        Sub suba(0.1,0.1,6);
-        suba.Show();
+        Sub suba(para,2);
+        
+        QWave wave(suba.System().cols(), suba.System().rows());
+
+        cout<<wave.Wave()<<endl;
+        cout<<"haha"<<endl;
+        /*
+        cout<<suba.SysA()<<endl;
+        cout<<"hehe"<<endl;
+        cout<<suba.SysAdag()<<endl;*/
+
+        MatrixXd a;
+        cout<<wave.TruncL(a, 10)<<endl<<"haha"<<endl
+        <<wave.TruncR(a,10)<<endl;
+
+
+
+        
+        
+        //suba.Show();
         
 }

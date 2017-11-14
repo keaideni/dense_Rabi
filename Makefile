@@ -21,13 +21,17 @@ LIBSPECTRA = -I/media/xuejian/WORK/spectra/spectra-0.5.0/include/ -I/media/xueji
 
 
 
-obj=main.o Sub.o
+obj=main.o Sub.o QWave.o Super.o
 main:$(obj)
 	$(CCCOM) -o main $(obj)  $(LIBSPECTRA)
 main.o:main.cpp test.h 
 	$(CCCOM) -c main.cpp $(LIBSPECTRA)
-Sub.o:Sub.cpp Sub.h
+Sub.o:Sub.cpp Sub.h Parameter.h
 	$(CCCOM) -c Sub.cpp -O2 $(LIBSPECTRA)
+QWave.o:QWave.cpp QWave.h
+	$(CCCOM) -c QWave.cpp -O2 $(LIBSPECTRA)
+Super.o:Super.cpp Super.h
+	$(CCCOM) -c Super.cpp -O2 $(LIBSPECTRA)
 .PHONY:clean
 clean:
 	rm -f main $(obj)
