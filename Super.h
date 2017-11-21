@@ -8,9 +8,10 @@ private:
         double sigma_;
         double Jr, Jcr;
         
-        QWave Wave;
-        int Dim;
-        const Sub& Sys, Env;
+        QWave _Wave;
+        
+        const Sub& Sys;
+        const Sub& Env;
 public:
 
 
@@ -21,17 +22,23 @@ public:
         {
                 f1tof2(x_in, y_out);
         };
-
-        Super(const Sub& _Sys, const Sub& _Env, const Parameter& para):
+        const QWave& Wave()const{return _Wave;};
+        int Dim;
+        Super(const Parameter& para, const Sub& _Sys, const Sub& _Env):
         Jr(para.Jr()),
         Jcr(para.Jcr()),
         Sys(_Sys),
         Env(_Env),
-        Wave(_Sys,SysEye().cols(), _Env.SysEye().rows()),
-        Dim(Wave.Wave().cols()*Wave.Wave().rows())
+        _Wave(_Sys.SysEye().cols(), _Env.SysEye().rows()),
+        Dim(_Wave.Wave().cols()*_Wave.Wave().rows())
         {};
 
-        void f1tof2(const double* f, const double* g);
+        void f1tof2(double* f, double* g);
+        void f1tof2(const vector<double>& f, vector<double>& g);
+
+        void OneIteration();
+
+
 };
 
 

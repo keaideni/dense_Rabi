@@ -1,11 +1,11 @@
-#include "test.h"
+#include "DMRG.h"
 
 
 int Sub::nmax;
 
 int main(void)
 {
-        Sub::nmax=1;
+        Sub::nmax=4;
         Parameter para;
-        testSub(para);
+        DMRG haha(para);
 }

@@ -16,9 +16,11 @@ public:
         const double& Jcr()const{return _Jcr;};
         const int& LatticeSize()const{return _LatticeSize;};
         const int& D()const{return _D;};
+
+        void ChangeD(const int& dd){_D=dd;};
         //Parameter();
         ~Parameter(){};
-        double energy;
+        double Energy;
 
         Parameter()
         {

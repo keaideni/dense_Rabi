@@ -5,10 +5,13 @@
 #include <Eigen/Dense>
 #include <cmath>
 #include "Parameter.h"
+#include<sstream>
+#include<string>
+
 
 using  namespace std; 
 using namespace Eigen;
-
+string itos(const int& i);
 class Sub
 {
 private:
@@ -46,14 +49,19 @@ public:
         {}
 
         Sub(const Parameter& para, const int& orbital);
-        Sub(const Sub& SubL, const Sub& SubR, const Parameter& para, const int& orbital);
+        Sub(const Parameter& para, const Sub& SubL, const Sub& SubR, const int& orbital);
 
+        const Sub& operator=(const Sub& a);
 
         void Trunc(const MatrixXd& U);
         void Save()const;
         void Read(const int& orbital);
         void Show()const;
 
+        void ChangeOrbital(const int& orb){_Orbital=orb;};
+
 };
+
+
 
 #endif // SUB_H

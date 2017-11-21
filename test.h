@@ -1,26 +1,28 @@
-#include "QWave.h"
+#include "SuperEnergy.h"
 
-void testSub(const Parameter& para);
+void testSub(Parameter& para);
 
-void testSub(const Parameter& para)
+void testSub(Parameter& para)
 {
-        Sub suba(para,2);
+        Sub suba(para,1);
+
+        Sub subb(para, 2);
+
+        Sub subc(suba, subb, para, 3);
         
-        QWave wave(suba.System().cols(), suba.System().rows());
+        
+        Super sup(subc, subc, para);
 
-        cout<<wave.Wave()<<endl;
-        cout<<"haha"<<endl;
-        /*
-        cout<<suba.SysA()<<endl;
-        cout<<"hehe"<<endl;
-        cout<<suba.SysAdag()<<endl;*/
+        SuperEnergy supp(para, sup);
 
-        MatrixXd a;
-        cout<<wave.TruncL(a, 10)<<endl<<"haha"<<endl
-        <<wave.TruncR(a,10)<<endl;
+        cout<<para.Energy<<endl;
+        MatrixXd truncU;
+        
+        supp.wave.TruncL(truncU, para.D());
 
-
-
+        //cout<<truncU.rows()<<"X"<<truncU.cols()<<endl;
+        subc.Trunc(truncU);
+        subc.Show();
         
         
         //suba.Show();

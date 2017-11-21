@@ -26,7 +26,7 @@ const MatrixXd& QWave::LOPWave(const MatrixXd& sys)
 
 const MatrixXd& QWave::ROPWave(const MatrixXd& Env)
 {
-        _Wave=_Wave*Env;
+        _Wave=_Wave*Env.transpose();
 
         return _Wave;
 }
@@ -34,7 +34,7 @@ const MatrixXd& QWave::ROPWave(const MatrixXd& Env)
 
 const MatrixXd& QWave::LROPWave(const MatrixXd& Sys, const MatrixXd& Env)
 {
-        _Wave=Sys*_Wave*Env;
+        _Wave=Sys*_Wave*Env.transpose();
         return _Wave;
 }
 
@@ -65,6 +65,24 @@ const MatrixXd& QWave::f2Wave(const vector<double>& f)
 
         return _Wave;
 }
+
+
+const MatrixXd& QWave::f2Wave(const VectorXd& f)
+{
+        for(int i=0; i<_Wave.rows(); ++i)
+        {
+                for(int j=0; j<_Wave.cols(); ++j)
+                {
+                        _Wave(i, j)=f(i*_Wave.cols()+j);
+                }
+        }
+
+        return _Wave;
+}
+
+
+
+
 const MatrixXd& QWave::TruncL(MatrixXd& truncU, const int& D)const
 {
         vector<Eigstruct> denmat;
@@ -137,7 +155,7 @@ const MatrixXd& QWave::TruncR(MatrixXd& truncV, const int& D)const
 
         sort(denmat.begin(), denmat.end(), comp);
 
-        int nrow(_Wave.rows());
+        int nrow(_Wave.cols());
         int ncol(D<denmat.size()?D:denmat.size());
         truncV=MatrixXd::Zero(nrow, ncol);
 

@@ -1,7 +1,5 @@
 #include "Sub.h"
-#include<sstream>
-#include<string>
-string itos(const int& i);
+
 string itos(const int& i)
 {
         stringstream s;
@@ -12,8 +10,9 @@ string itos(const int& i)
 void Sub::MatrixSave(const MatrixXd& A, ofstream& outfile)const
 {
         outfile<<A.rows()<<endl
-        <<A.cols()<<endl
-        <<A<<endl;
+        <<A.cols()<<endl;
+        outfile.precision(15);
+        outfile<<A<<endl;
 }
 
 void Sub::MatrixRead(MatrixXd& A, ifstream& infile)
@@ -80,7 +79,7 @@ _SysEye(MatrixXd::Identity((nmax+1)*2,(nmax+1)*2))
 }
 
 
-Sub::Sub(const Sub& SubL, const Sub& SubR, const Parameter& para, const int& orbital):
+Sub::Sub(const Parameter& para, const Sub& SubL, const Sub& SubR, const int& orbital):
 _Orbital(orbital)
 {
         Kron(_System, SubL.System(), SubR.SysEye());MatrixXd temp;
@@ -99,6 +98,31 @@ _Orbital(orbital)
 }
 
 
+
+const Sub& Sub::operator=(const Sub& a)
+{
+        _Orbital=a._Orbital;
+        _System=a._System;
+        _SysA=a._SysA;
+        _SysAdag=a._SysAdag;
+        _SysEye=a._SysEye;
+        _SysA1=a._SysA1;
+        _SysAdag1=a._SysAdag1;
+}
+
+
+
+
+
+void Sub::Trunc(const MatrixXd& truncU)
+{
+        _System=truncU.adjoint()*_System*truncU;
+        _SysA=truncU.adjoint()*_SysA*truncU;
+        _SysAdag=truncU.adjoint()*_SysAdag*truncU;
+        _SysEye=truncU.adjoint()*_SysEye*truncU;
+        _SysA1=truncU.adjoint()*_SysA1*truncU;
+        _SysAdag1=truncU.adjoint()*_SysAdag1*truncU;
+}
 
 
 void Sub::Save()const
@@ -148,15 +172,15 @@ void Sub::Show()const
 {
         cout<<"The site of Sub block is "<<_Orbital<<endl;
         cout<<"The System:"<<endl;
-        cout<<_System<<endl;
+        cout<<_System.rows()<<"X"<<_System.cols()<<endl;
         cout<<"The SysA:"<<endl;
-        cout<<_SysA<<endl;
+        cout<<_SysA.rows()<<"X"<<_SysA.cols()<<endl;
         cout<<"The SysAdag:"<<endl;
-        cout<<_SysAdag<<endl;
+        cout<<_SysAdag.rows()<<"X"<<_SysAdag.cols()<<endl;
         cout<<"The SysA1:"<<endl;
-        cout<<_SysA1<<endl;
+        cout<<_SysA1.rows()<<"X"<<_SysA1.cols()<<endl;
         cout<<"The SysAdag1:"<<endl;
-        cout<<_SysAdag1<<endl;
+        cout<<_SysAdag1.rows()<<"X"<<_SysAdag1.cols()<<endl;
         cout<<"The SysEye:"<<endl;
-        cout<<_SysEye<<endl;
+        cout<<_SysEye.rows()<<"X"<<_SysEye.cols()<<endl;
 }

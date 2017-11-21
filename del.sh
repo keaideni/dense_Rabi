@@ -2,5 +2,6 @@
 
 rm -rf block
 rm -rf result
+rm -rf trunc
 rm Parameter
-make clean
+#make clean
