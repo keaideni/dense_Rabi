@@ -64,15 +64,18 @@ n(para, para.LatticeSize()-1)
         int OS(1), OE(para.LatticeSize());
 
         cout<<"===================The growth process:==================="<<endl;
-        BuildUp(para, OS, OE, 2);
+        BuildUp(para, OS, OE);
         cout<<"===================The sweep process:==================="<<endl;
 
-        para.ChangeD(10);
-
-
-        
-
+        para.ChangeD(100);
+        OS-=1;OE+=1;//This one for the IniWave works.
         Sweep(para, OS, OE);
+
+        cout<<"===================The sweep process finished!================="<<endl;
+
+
+
+
         //OneSiteSweep(para, OS, OE);
 
 
@@ -84,9 +87,9 @@ n(para, para.LatticeSize()-1)
 
 
 
-void DMRG::BuildUp(Parameter& para, int& OS, int& OE, const int& medsites)
+void DMRG::BuildUp(Parameter& para, int& OS, int& OE)
 {
-        while(OE-OS>(2*medsites-1))
+        while(OE-OS>1)
         {
 
                 Sys.Read(OS);
@@ -118,6 +121,8 @@ void DMRG::BuildUp(Parameter& para, int& OS, int& OE, const int& medsites)
                 OS+=1;
                 OE-=1;
 
+                if(OE-OS==1)IniWave=Supp.wave.Wave();
+
         }
 
 
@@ -132,8 +137,11 @@ void DMRG::Sweep(Parameter& para, int& OS, int& OE)
 
         double menergy(0);
         double err(1);
+        int SweepNo(1);
+        bool stop(false);
+        
 
-        while(err>0.000001)
+        while(!stop)
         {
                 Sys.Read(OS);Env.Read(OE);m.ChangeOrbital(OS+dir); n.ChangeOrbital(OE+dir);
                 if(Gdir==1)
@@ -150,11 +158,15 @@ void DMRG::Sweep(Parameter& para, int& OS, int& OE)
                 OS+=dir;
                 OE+=dir;
 
-                if(OS==(para.LatticeSize()/2-1))
+                if(OS==(para.LatticeSize()/2))
                 {
-                        err=abs(para.Energy-menergy);
+                        err=abs(para.Energy-menergy);cout<<err<<endl;
                         menergy=para.Energy;
                         Gdir*=-1;
+                        stop=(err<1e-6);
+
+                        if(!stop)
+                        cout<<"==========the "<<SweepNo++<<"th sweeps=============="<<endl;
                         
                 }else if(OE==para.LatticeSize()||OS==1)
                 {
@@ -192,7 +204,10 @@ void DMRG::CalcuEnergy(Parameter& para, const Sub& a,
         
 
         time(&start);
-        SuperEnergy Supp(para, Sup);
+        //{
+                //SuperEnergy Supp(para, Sup);
+        //}
+        SuperEnergy Supp(para, Sup, IniWave);
         time(&end);
         cout<<"The process of getting eigenstate takes "<<(end-start)<<"s."<<endl;
 
@@ -235,7 +250,7 @@ void DMRG::OneSiteSweep(Parameter& para, int& OS, int& OE)
         double menergy(0);
         double err(1);
 
-        while(err>0.000001)
+        while(err>0.0001)
         {
                 Sys.Read(OS);Env.Read(OE);m.ChangeOrbital(OS+dir); n.ChangeOrbital(OE+dir);
 
@@ -323,11 +338,13 @@ void DMRG::Initialize(const int& dir, const int& Gdir, const int& OS, const int&
         if(dir==1)
         {
 
-                int De(Env.SysEye().cols()), Ds(Sys.SysEye().cols()), Dee;
+                int De(Env.SysEye().cols()), Ds, Dee;
                 {
                         Sub temp;
                         temp.Read(OE+1);
                         Dee=temp.SysEye().cols();
+                        temp.Read(OS+1);
+                        Ds=temp.SysEye().cols();
                 }
 
                 if(Gdir==1)
@@ -359,7 +376,7 @@ void DMRG::Initialize(const int& dir, const int& Gdir, const int& OS, const int&
                                         {
                                                 for(int in=0; in<Dn; ++in)
                                                 IniWave(is*Dm+im, ie*Dn+in)
-                                                =temp(in*Ds+is, im*De+ie);
+                                                =temp(in*Ds+is, im*Dee+ie);
                                         }
                                 }
                         }
@@ -368,7 +385,7 @@ void DMRG::Initialize(const int& dir, const int& Gdir, const int& OS, const int&
                 }else
                 {
                         MatrixXd temp(MatrixXd::Zero(Ds*Dm, De));
-                        for(int is=0; is<IniWave.rows(); ++is)
+                        for(int is=0; is<Ds; ++is)
                         {
                                 for(int im=0; im<Dm;++im)
                                 {
@@ -391,7 +408,7 @@ void DMRG::Initialize(const int& dir, const int& Gdir, const int& OS, const int&
                                         for(int im=0; im<Dm; ++im)
                                         {
                                                 for(int in=0; in<Dn; ++in)
-                                                IniWave(in*Ds+is, im*De+ie)
+                                                IniWave(in*Ds+is, im*Dee+ie)
                                                 =temp(is*Dm+im, ie*Dn+in);
                                         }
                                 }
@@ -401,11 +418,14 @@ void DMRG::Initialize(const int& dir, const int& Gdir, const int& OS, const int&
         {
 
 
-                int De(Env.SysEye().cols()), Ds(Sys.SysEye().cols()), Dss;
+                int De, Ds(Sys.SysEye().cols()), Dss;
                 {
                         Sub temp;
                         temp.Read(OS-1);
                         Dss=temp.SysEye().cols();
+
+                        temp.Read(OE-1);
+                        De=temp.SysEye().cols();
                 }
                 if(Gdir==1)
                 {
@@ -436,7 +456,7 @@ void DMRG::Initialize(const int& dir, const int& Gdir, const int& OS, const int&
                                         {
                                                 for(int in=0; in<Dn; ++in)
                                                 IniWave(is*Dm+im, ie*Dn+in)
-                                                =temp(in*Ds+is, im*De+ie);
+                                                =temp(in*Dss+is, im*De+ie);
                                         }
                                 }
                         }
@@ -468,7 +488,7 @@ void DMRG::Initialize(const int& dir, const int& Gdir, const int& OS, const int&
                                         for(int im=0; im<Dm; ++im)
                                         {
                                                 for(int in=0; in<Dn; ++in)
-                                                IniWave(in*Ds+is, im*De+ie)
+                                                IniWave(in*Dss+is, im*De+ie)
                                                 =temp(is*Dm+im, ie*Dn+in);
                                         }
                                 }

@@ -24,7 +24,7 @@ public:
 
 
         //=================periodic condition==================
-        void BuildUp(Parameter& para, int& OS, int& OE, const int&);
+        void BuildUp(Parameter& para, int& OS, int& OE);
         
         //================sweep======================
         void Sweep(Parameter& para, int& OS, int& OE);

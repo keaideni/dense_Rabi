@@ -25,7 +25,7 @@ public:
                 {
                         wave.f2Wave(eigs.eigenvectors(1));
                         para.Energy = eigs.eigenvalues()(0);
-                        //std::cout << eigs.num_iterations() << std::endl;
+                        std::cout << eigs.num_iterations() << std::endl;
                 }
 
                 
@@ -67,6 +67,33 @@ public:
                         wave.f2Wave(eigs.eigenvectors(1));
                         para.Energy = eigs.eigenvalues()(0);
                         //std::cout << eigs.num_iterations() << std::endl;
+                }
+
+                
+        };
+        SuperEnergy(Parameter&para,Super& sup, const MatrixXd& initwave)
+        {
+                wave = sup.Wave();
+                std::vector<double> f;
+                //wave=initwave;
+                for(int i=0; i<initwave.rows(); ++i)
+                {
+                        for(int j=0; j<initwave.cols();++j)
+                        f.push_back(initwave(i,j));
+                }
+                double *pt = new double [sup.Dim];
+                for(int i = 0; i < sup.Dim; ++i)pt[i] = f.at(i);
+                
+                int a(6);
+                if(sup.Dim < 6)a=4;
+                SymEigsSolver<double, SMALLEST_ALGE, Super> eigs(&sup, 1, a);
+                eigs.init(pt);
+                eigs.compute();
+                if (eigs.info() == SUCCESSFUL)
+                {
+                        wave.f2Wave(eigs.eigenvectors(1));
+                        para.Energy = eigs.eigenvalues()(0);
+                        std::cout << eigs.num_iterations() << std::endl;
                 }
 
                 

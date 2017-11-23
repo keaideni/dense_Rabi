@@ -1,30 +1,16 @@
 #include "SuperEnergy.h"
+#include <Eigen/Sparse>
 
-void testSub(Parameter& para);
+void test(Parameter& para);
 
-void testSub(Parameter& para)
+void test(Parameter& para)
 {
-        Sub suba(para,1);
+        SparseMatrix<double> A(5,5);
 
-        Sub subb(para, 2);
+        for(int i=0;i<5;i++)A.insert(i, i+1)=sqrt(i+1);
 
-        Sub subc(suba, subb, para, 3);
+        A.makecompressed();
         
-        
-        Super sup(subc, subc, para);
-
-        SuperEnergy supp(para, sup);
-
-        cout<<para.Energy<<endl;
-        MatrixXd truncU;
-        
-        supp.wave.TruncL(truncU, para.D());
-
-        //cout<<truncU.rows()<<"X"<<truncU.cols()<<endl;
-        subc.Trunc(truncU);
-        subc.Show();
-        
-        
-        //suba.Show();
+        cout<<A<<endl;
         
 }

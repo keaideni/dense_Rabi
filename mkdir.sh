@@ -4,7 +4,7 @@ mkdir block
 mkdir result
 mkdir trunc
 cat>Parameter<<EOF
-D= 10
+D= 20
 LatticeSize= 20
 gr= 0.1
 gcr= 0.1
